@@ -2,6 +2,23 @@
 
 This is an SQL schema and indexing scripts for music collections.
 
+## Migration
+
+1. Generate alembic migration from models
+    ```
+    $ alembic revision --autogenerate -m "<message>"
+    ```
+
+1. View the SQL this migration will run
+    ```
+    $ alembic upgrade head --sql > sql.txt
+    ```
+
+1. Actually run the migration
+    ```
+    $ alembic upgrade head
+    ```
+
 ## Initial setup
 
 You don't need to do this. This is notes for myself on how to set up at the very beginning.
