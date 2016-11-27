@@ -1,2 +1,5 @@
 sqlalchemy
+alembic
+mysql-python
+
 
