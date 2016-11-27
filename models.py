@@ -1,6 +1,14 @@
-TRACK_NAME_LEN =
-ALBUM_NAME_LEN =
-COMPOSER_NAME_LEN =
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Table
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+
+
+TRACK_NAME_LEN = 64
+ALBUM_NAME_LEN = 64
+
+
+Base = declarative_base()
 
 
 class Track(Base):
@@ -11,6 +19,7 @@ class Track(Base):
     number = Column(Integer)
     name = Column(String(TRACK_NAME_LEN), nullable=False)
 
+    # many -> one
     album_id = Column(Integer, ForeignKey('albums.id'), nullable=True)
     album = relationship('Album', back_populates='tracks')
 
@@ -25,24 +34,11 @@ class Album(Base):
     # one -> many
     tracks = relationship('Track', back_populates='album')
 
-
-class Composer(Base):
-
-    __tablename__ = 'composers'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(COMPOSER_NAME_LEN), nullable=False)
-
-
-# TODO: Link composers to Tracks
-
-
-class Group(Base):
-
-    __tablename__ = 'groups'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(GROUP_NAME_LEN), nullable=False)
+    # many -> many
+    genres = relationship(
+            'Genre',
+            secondary=album_genre,
+            back_populates='albums')
 
 
 class Genre(Base):
@@ -52,4 +48,14 @@ class Genre(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(GENRE_NAME_LEN), nullable=False)
 
+    # many -> many
+    albums = relationship(
+            'Album',
+            secondary=album_genre,
+            back_populates='genres')
+
+
+album_genre = Table('album_genre', Base.metadata,
+        Column('album_id', Integer, ForeignKey('albums.id')),
+        Column('genre_id', Integer, ForeignKey('genres.id')))
 
