@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 TRACK_NAME_LEN = 64
 ALBUM_NAME_LEN = 64
 GENRE_NAME_LEN = 64
+URL_LEN = 256
 
 
 Base = declarative_base()
@@ -23,6 +24,20 @@ class Track(Base):
     # many -> one
     album_id = Column(Integer, ForeignKey('albums.id'), nullable=True)
     album = relationship('Album', back_populates='tracks')
+
+    # one -> many
+    urls = relationship('URL', back_populates='track')
+
+
+class URL(Base):
+    __tablename__ = 'urls'
+
+    id = Column(Integer, primary_key=True)
+    value = Column(String(URL_LEN), nullable=False, unique=True)
+
+    # many -> one
+    track_id = Column(Integer, ForeignKey('tracks.id'), nullable=False)
+    track = relationship('Track', back_populates='urls')
 
 
 album_genre = Table('album_genre', Base.metadata,
