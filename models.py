@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 TRACK_NAME_LEN = 64
 ALBUM_NAME_LEN = 64
+GENRE_NAME_LEN = 64
 
 
 Base = declarative_base()
@@ -24,12 +25,18 @@ class Track(Base):
     album = relationship('Album', back_populates='tracks')
 
 
+album_genre = Table('album_genre', Base.metadata,
+        Column('album_id', Integer, ForeignKey('albums.id')),
+        Column('genre_id', Integer, ForeignKey('genres.id')))
+
+
 class Album(Base):
 
     __tablename__ = 'albums'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(ALBUM_NAME_LEN), nullable=False)
+    year = Column(Integer, nullable=True)
 
     # one -> many
     tracks = relationship('Track', back_populates='album')
@@ -53,9 +60,4 @@ class Genre(Base):
             'Album',
             secondary=album_genre,
             back_populates='genres')
-
-
-album_genre = Table('album_genre', Base.metadata,
-        Column('album_id', Integer, ForeignKey('albums.id')),
-        Column('genre_id', Integer, ForeignKey('genres.id')))
 
