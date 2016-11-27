@@ -53,7 +53,7 @@ class Genre(Base):
     __tablename__ = 'genres'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(GENRE_NAME_LEN), nullable=False)
+    name = Column(String(GENRE_NAME_LEN), nullable=False, unique=True)
 
     # many -> many
     albums = relationship(
