@@ -4,11 +4,11 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm.exc import NoResultFound
 
-import models
+import musicdb.models as models
 
 
 try:
-    import config
+    import musicdb.config as config
 except ImportError as e:
     message = e.args[0]
     message = message + ("\nFollow instructions in setup.md to "

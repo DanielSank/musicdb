@@ -8,13 +8,13 @@ from logging.config import fileConfig
 config = context.config
 
 # Get the database url
-import config as myconfig
+import musicdb.config as myconfig
 config.set_main_option(
         'sqlalchemy.url',
         myconfig.config.get('DB_URL'))
 
 # Get model metadata
-import models
+import musicdb.models as models
 target_metadata = models.Base.metadata
 
 # Interpret the config file for Python logging.
