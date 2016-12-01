@@ -1,8 +1,12 @@
 from __future__ import print_function
 
+
+import mutagen
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm.exc import NoResultFound
+import yaml
+
 
 import musicdb.models as models
 
@@ -55,4 +59,17 @@ def get_or_create(session, model, get_params, create_params=None):
 
 def get_one(session, model, params):
     return session.query(model).filter_by(**params).one()
+
+
+def make_yaml_from_file(filepath):
+    f = mutagen.File(filepath)
+    tags = dict(f.tags)
+    d = {}
+    d['album'] = tags['album'][0]
+    d['composers'] = tags['composer'][0].split('/')
+    d['year'] = int(tags['date'][0])
+    d['genres'] = tags['genre']
+    d['title'] = tags['title']
+    d['number'] = int(tags['tracknumber'][0])
+    return yaml.safe_dump(d)
 
