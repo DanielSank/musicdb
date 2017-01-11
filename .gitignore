@@ -1,3 +1,4 @@
 *.pyc
-config.py
+cloud_sql_proxy
+musicdb-auth-token.json
 
