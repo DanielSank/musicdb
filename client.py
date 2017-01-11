@@ -23,11 +23,10 @@ def get_url(role=None):
     config_file_name = os.path.join(home, ".musicdb_config.yml")
     with open(config_file_name, 'r') as stream:
         parameters = yaml.load(stream)[role]
-    url = r'mysql+mysqldb://{}:{}@{}/{}'.format(
+    url = r'mysql+mysqldb://{}:{}@{}'.format(
             parameters['USERNAME'],
             parameters['PASSWORD'],
-            parameters['HOST'],
-            parameters['DBNAME'])
+            parameters['HOST'])
     return url
 
 
