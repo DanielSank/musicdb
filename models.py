@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 TRACK_NAME_LEN = 64
 ALBUM_NAME_LEN = 64
 GENRE_NAME_LEN = 64
-URL_LEN = 256
+URL_LEN = 255
 
 
 Base = declarative_base()
