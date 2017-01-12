@@ -33,3 +33,11 @@ If you're using virtualenvwrapper and the project is in `~/src/musidb`, then do
 
 See Google Drive document.
 
+## Queries
+
+* Get all tracks whose album has a particular tag
+
+    ```python
+    session.query(Track).filter(Track.album.has(Album.tags.any(name='tango'))).all()
+    ```
+
