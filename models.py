@@ -6,11 +6,16 @@ from sqlalchemy.ext.declarative import declarative_base
 
 TRACK_NAME_LEN = 64
 ALBUM_NAME_LEN = 64
-GENRE_NAME_LEN = 64
+TAG_NAME_LEN = 64
 URL_LEN = 255
 
 
 Base = declarative_base()
+
+
+track_tag = Table('track_tag', Base.metadata,
+        Column('track_id', Integer, ForeignKey('tracks.id')),
+        Column('tag_id', Integer, ForeignKey('tags.id')))
 
 
 class Track(Base):
@@ -28,21 +33,28 @@ class Track(Base):
     # one -> many
     urls = relationship('URL', back_populates='track')
 
+    # many -> many
+    tags = relationship(
+            'Tag',
+            secondary=track_tag,
+            back_populates='tracks')
+
+
 
 class URL(Base):
     __tablename__ = 'urls'
 
     id = Column(Integer, primary_key=True)
-    value = Column(String(URL_LEN), nullable=False, unique=True)
+    value = Column(String(URL_LEN), nullable=False)
 
     # many -> one
     track_id = Column(Integer, ForeignKey('tracks.id'), nullable=False)
     track = relationship('Track', back_populates='urls')
 
 
-album_genre = Table('album_genre', Base.metadata,
+album_tag = Table('album_tag', Base.metadata,
         Column('album_id', Integer, ForeignKey('albums.id')),
-        Column('genre_id', Integer, ForeignKey('genres.id')))
+        Column('tag_id', Integer, ForeignKey('tags.id')))
 
 
 class Album(Base):
@@ -57,22 +69,27 @@ class Album(Base):
     tracks = relationship('Track', back_populates='album')
 
     # many -> many
-    genres = relationship(
-            'Genre',
-            secondary=album_genre,
+    tags = relationship(
+            'Tag',
+            secondary=album_tag,
             back_populates='albums')
 
 
-class Genre(Base):
+class Tag(Base):
 
-    __tablename__ = 'genres'
+    __tablename__ = 'tags'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(GENRE_NAME_LEN), nullable=False, unique=True)
+    name = Column(String(TAG_NAME_LEN), nullable=False, unique=True)
 
     # many -> many
     albums = relationship(
             'Album',
-            secondary=album_genre,
-            back_populates='genres')
+            secondary=album_tag,
+            back_populates='tags')
+
+    tracks = relationship(
+            'Track',
+            secondary=track_tag,
+            back_populates='tags')
 
