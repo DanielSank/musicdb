@@ -18,7 +18,12 @@ track_tag = Table('track_tag', Base.metadata,
         Column('tag_id', Integer, ForeignKey('tags.id')))
 
 
-class Track(Base):
+class IPythonPrettyPrintable(object):
+    def _repr_pretty_(self, p, cycle):
+        p.text(str(self) if not cycle else '...')
+
+
+class Track(Base, IPythonPrettyPrintable):
 
     __tablename__ = 'tracks'
 
@@ -39,9 +44,11 @@ class Track(Base):
             secondary=track_tag,
             back_populates='tracks')
 
+    def __str__(self):
+        return 'Track(name={})'.format(self.name)
 
 
-class URL(Base):
+class URL(Base, IPythonPrettyPrintable):
     __tablename__ = 'urls'
 
     id = Column(Integer, primary_key=True)
@@ -57,7 +64,7 @@ album_tag = Table('album_tag', Base.metadata,
         Column('tag_id', Integer, ForeignKey('tags.id')))
 
 
-class Album(Base):
+class Album(Base, IPythonPrettyPrintable):
 
     __tablename__ = 'albums'
 
@@ -74,10 +81,13 @@ class Album(Base):
             secondary=album_tag,
             back_populates='albums')
 
+    def __str__(self):
+        return 'Album(name={})'.format(self.name)
+
     __table_args__ = (UniqueConstraint('name', 'year', name='name_year_uc'),)
 
 
-class Tag(Base):
+class Tag(Base, IPythonPrettyPrintable):
 
     __tablename__ = 'tags'
 
@@ -94,4 +104,7 @@ class Tag(Base):
             'Track',
             secondary=track_tag,
             back_populates='tags')
+
+    def __str__(self):
+        return 'Tag(name={})'.format(self.name)
 
