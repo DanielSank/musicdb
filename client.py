@@ -36,7 +36,37 @@ def make_session(role):
     return orm.sessionmaker(bind=engine)()
 
 
-def make_yaml_from_file(filepath):
+def get_or_create(session, model, get_params, create_params=None):
+    """Get a or create an instance in the database.
+    Args:
+        session:
+        model: Class of the object to create.
+        get_params (dict): parameters needed to uniquely identify an already
+            existing entity.
+        create_params (dict): Additional parameters needed if the entity does
+            not already exist and has to be created
+
+    Returns:
+        an ORM object representing the instance.
+        (bool): True if the instance was created, False if it already existed.
+    """
+    if create_params is None:
+        create_params = {}
+    try:
+        instance = session.query(model).filter_by(**get_params).one()
+    except NoResultFound:
+        instance = None
+    if instance:
+        created = False
+    else:
+        all_params = dict(get_params.items() + create_params.items())
+        instance = model(**all_params)
+        session.add(instance)
+        created = True
+    return instance, created
+
+
+def file_to_dict(filepath):
     f = mutagen.File(filepath)
     tags = dict(f.tags)
     d = {}
@@ -46,5 +76,23 @@ def make_yaml_from_file(filepath):
     d['genres'] = tags['genre']
     d['title'] = tags['title']
     d['number'] = int(tags['tracknumber'][0])
-    return yaml.safe_dump(d)
+    return d
+
+
+def make_entities(session, data):
+    tags = []
+    for genre in data['genres']:
+        tag, created_tag = get_or_create(
+                session,
+                models.Tag,
+                {'name': genre.lower()})
+    album, created_album = get_or_create(
+            session,
+            models.Album,
+            {'name': data['album'], 'year': data['year']})
+    track, created_track = get_or_create(
+            session,
+            models.Track,
+            {'name': data['title'], 'number': data['number'], 'album': album})
+
 
