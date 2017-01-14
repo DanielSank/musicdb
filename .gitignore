@@ -1,4 +1,5 @@
 *.pyc
 cloud_sql_proxy
-musicdb-auth-token.json
+run_proxy
+setup_environment.sh
 

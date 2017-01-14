@@ -20,7 +20,7 @@ def get_url(role=None):
     if role is None:
         role = os.environ['MUSICDB_ROLE']
     home = os.path.expanduser('~')
-    config_file_name = os.path.join(home, ".musicdb_config.yml")
+    config_file_name = os.path.join(home, ".musicdb", "config.yml")
     with open(config_file_name, 'r') as stream:
         parameters = yaml.load(stream)[role]
     url = r'mysql+mysqldb://{}:{}@{}'.format(
