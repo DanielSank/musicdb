@@ -1,5 +1,4 @@
 *.pyc
 cloud_sql_proxy
 run_proxy
-setup_environment.sh
 
